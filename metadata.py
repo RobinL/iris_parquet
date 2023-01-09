@@ -7,13 +7,40 @@ iris_dataset = pq.read_table("iris.parquet")
 # Get the metadata for the dataset
 schema = iris_dataset.schema
 
+schema = pa.schema(
+    [
+        pa.field(
+            "sepal_length",
+            "double",
+            metadata={"description": "The length of the sepal in centimeters"},
+        ),
+        pa.field(
+            "sepal_width",
+            "double",
+            metadata={"description": "The width of the sepal in centimeters"},
+        ),
+        pa.field(
+            "petal_length",
+            "double",
+            metadata={"description": "The length of the petal in centimeters"},
+        ),
+        pa.field(
+            "petal_width",
+            "double",
+            metadata={"description": "The width of the petal in centimeters"},
+        ),
+        pa.field(
+            "species",
+            "string",
+            metadata={"description": "The species of the iris plant"},
+        ),
+    ],
+    metadata={"Dataset Description": "The iris dataset"},
+)
 
-# Add descriptions for each column in the dataset
-schema[0].with_metadata({"description": "The length of the sepal in centimeters"})
-schema[1].with_metadata({"description": "The width of the sepal in centimeters"})
-schema[2].with_metadata({"description": "The length of the petal in centimeters"})
-schema[3].with_metadata({"description": "The width of the petal in centimeters"})
-schema[4].with_metadata({"description": "The species of the iris plant"})
-
-# Save the updated dataset to a new parquet file
+iris_dataset = iris_dataset.cast(schema)
 pq.write_table(iris_dataset, "iris_with_metadata.parquet")
+
+
+iris_dataset_md = pq.read_table("iris_with_metadata.parquet")
+iris_dataset_md.schema
